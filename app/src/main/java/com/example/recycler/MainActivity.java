@@ -1,35 +1,59 @@
 package com.example.recycler;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.Window;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.recycler.adapters.CategoryAdapter;
+import com.example.recycler.adapters.ViewPageAdapter;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 public class MainActivity extends AppCompatActivity {
-    private RecyclerView rcvItems;
-    private Adapter adt;
+    private RecyclerView rcvCategory;
+    private CategoryAdapter adapter;
+    private TabLayout tabLayout;
+    private ViewPager2 viewPager;
+    private FragmentStateAdapter fragmentStateAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Window window = MainActivity.this.getWindow();
+
+        window.setStatusBarColor(ContextCompat.getColor(MainActivity.this, R.color.background));
+
+        getSupportActionBar().setTitle("Shop");
         setContentView(R.layout.activity_main);
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerview);
+        tabLayout = findViewById(R.id.tabLayout);
+        viewPager = findViewById(R.id.view_Pager);
+        ViewPageAdapter viewPagerAdapter = new ViewPageAdapter(this);
+        viewPager.setAdapter(viewPagerAdapter);
 
-        List<Item> items = new ArrayList<>();
-        items.add(new Item("Pharmarcy",R.drawable.ic_baseline_local_pharmacy_24));
-        items.add(new Item("Soup",R.drawable.ic_baseline_soup_kitchen_24));
-        items.add(new Item("Gift",R.drawable.ic_baseline_card_giftcard_24));
-        items.add(new Item("Home",R.drawable.ic_baseline_home_24));
-        items.add(new Item("Hamburger",R.drawable.ic_baseline_lunch_dining_24));
-        items.add(new Item("Baby",R.drawable.ic_baseline_child_friendly_24));
-
-        recyclerView.setLayoutManager((new GridLayoutManager(this,3)));
-        recyclerView.setAdapter(new Adapter(getApplicationContext(),items));
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+            switch (position){
+                case 0:
+                    tab.setText("FEATURED");
+                    break;
+                case 1:
+                    tab.setText("DEALS");
+                    break;
+                case 2:
+                    tab.setText("CATEGORIES");
+                    break;
+            }
+        }).attach();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_item,menu);
+        return true;
+    }
 }
